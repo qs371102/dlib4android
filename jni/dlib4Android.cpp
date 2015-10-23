@@ -32,6 +32,7 @@ using namespace std;
 static shape_predictor sp;
 static bool hasIni=false;
 static frontal_face_detector detector;
+cv::Scalar color(110, 220, 0 );
 
 void initalShapePredictor()
 {
@@ -83,20 +84,6 @@ void getFaces()
 	                cout << "pixel position of second part: " << shape.part(1)<< endl;
 	                shapes.push_back(shape);
 	            }
-	            /*
-	            for (unsigned long i = 0; i < faces.size(); ++i)
-	            {
-	            	 // sp(cimg, faces[i]);
-	            	 full_object_detection shape = shapes(cimg, faces[i]);
-	                 cout << "number of parts: "<< shape.num_parts() << endl;
-	                 cout << "pixel position of first part:  " << shape.part(0) << endl;
-	                 cout << "pixel position of second part: " << shape.part(1) << endl;
-	                 shapes.push_back(shape);
-	            }*/
-	            // Display it all on the screen
-	            //win.clear_overlay();
-	            //win.set_image(cimg);
-	            //win.add_overlay(render_face_detections(shapes));
 	        }
 	    }
 	    catch(serialization_error& e)
@@ -148,7 +135,7 @@ void lenaImage()
 	}
 }
 
-void imageProcess(cv::Mat image)
+void imageProcess(cv::Mat image,cv::Mat& finalImage)
 {
 	LOGD("imageProcess");
 	try
@@ -160,59 +147,69 @@ void imageProcess(cv::Mat image)
 				initalShapePredictor();
 				hasIni=true;
 			}
-//			std::string path = "/sdcard/lena.png";
-//			cv::Mat inputImage = cv::imread(path);
 			cv_image<rgb_pixel> img(image);
-
-//	        cv_image<rgb_alpha_pixel> img(image);
-	        LOGD("get image");
-	        //cv_image<bgr_pixel> cimg(temp);
 	        const clock_t begin_time = clock();
 	        std::vector<rectangle> dets = detector(img);
 	        std::vector<full_object_detection> shapes;
 	        LOGD("faces numb:%lu",dets.size());
 			for (unsigned long j = 0; j < dets.size(); ++j)
 			{
-				 full_object_detection shape = sp(img, dets[j]);
-				 LOGD("j: %lu",j);
-				 LOGD("number of parts: %lu",shape.num_parts());
-//				 for(unsigned long i=0;i<shape.num_parts();i++)
-//				 {
-//					 LOGD("pixel position of %lu part: X %ld Y %ld",i,shape.part(i).x(),shape.part(i).y());
-//				 }
-				 shapes.push_back(shape);
-			}
+				full_object_detection shape = sp(img, dets[j]);
+				for (unsigned long i = 1; i <= 16; ++i)
+					cv::line(finalImage,cv::Point( shape.part(i).x(),shape.part(i).y()), cv::Point( shape.part(i-1).x(),shape.part(i-1).y()), color);
+				for (unsigned long i = 28; i <= 30; ++i)
+					cv::line(finalImage,cv::Point( shape.part(i).x(),shape.part(i).y()), cv::Point( shape.part(i-1).x(),shape.part(i-1).y()), color);
 
+				for (unsigned long i = 18; i <= 21; ++i)
+					cv::line(finalImage,cv::Point( shape.part(i).x(),shape.part(i).y()), cv::Point( shape.part(i-1).x(),shape.part(i-1).y()), color);
+				for (unsigned long i = 23; i <= 26; ++i)
+					cv::line(finalImage,cv::Point( shape.part(i).x(),shape.part(i).y()), cv::Point( shape.part(i-1).x(),shape.part(i-1).y()), color);
+				for (unsigned long i = 31; i <= 35; ++i)
+					cv::line(finalImage,cv::Point( shape.part(i).x(),shape.part(i).y()), cv::Point( shape.part(i-1).x(),shape.part(i-1).y()), color);
+				cv::line(finalImage,cv::Point( shape.part(30).x(),shape.part(30).y()), cv::Point( shape.part(35).x(),shape.part(35).y()), color);
+				for (unsigned long i = 37; i <= 41; ++i)
+					cv::line(finalImage,cv::Point( shape.part(i).x(),shape.part(i).y()), cv::Point( shape.part(i-1).x(),shape.part(i-1).y()), color);
+				cv::line(finalImage,cv::Point( shape.part(36).x(),shape.part(36).y()), cv::Point( shape.part(41).x(),shape.part(41).y()), color);
+
+				for (unsigned long i = 43; i <= 47; ++i)
+					cv::line(finalImage,cv::Point( shape.part(i).x(),shape.part(i).y()), cv::Point( shape.part(i-1).x(),shape.part(i-1).y()), color);
+				cv::line(finalImage,cv::Point( shape.part(42).x(),shape.part(42).y()), cv::Point( shape.part(47).x(),shape.part(47).y()), color);
+
+				for (unsigned long i = 49; i <= 59; ++i)
+					cv::line(finalImage,cv::Point( shape.part(i).x(),shape.part(i).y()), cv::Point( shape.part(i-1).x(),shape.part(i-1).y()), color);
+				cv::line(finalImage,cv::Point( shape.part(48).x(),shape.part(48).y()), cv::Point( shape.part(59).x(),shape.part(59).y()), color);
+
+				for (unsigned long i = 61; i <= 67; ++i)
+					cv::line(finalImage,cv::Point( shape.part(i).x(),shape.part(i).y()), cv::Point( shape.part(i-1).x(),shape.part(i-1).y()), color );
+				cv::line(finalImage,cv::Point( shape.part(60).x(),shape.part(60).y()), cv::Point( shape.part(67).x(),shape.part(67).y()), color);
+				shapes.push_back(shape);
+				//image=matrix_op<op_array2d_to_mat< cv_image<rgb_pixel>> >(img);
+			}
 	        const clock_t end_time = clock();
 	        LOGD("%f",end_time);
-	        cout << "Find faces size: " << dets.size() <<  " takes " << (double(end_time - begin_time) / CLOCKS_PER_SEC) << " seconds" << endl;
 	    }
 	    catch (exception& e)
 	    {
 	    	LOGD("%s",e.what());
-	    	//LOGD("%s", perror("Error"));
-	        cout << "\nexception thrown!" << endl;
-	        cout << e.what() << endl;
 	    }
 }
 
 JNIEXPORT void JNICALL Java_com_example_dlib4android_dlibDetect_faceDetect
-  (JNIEnv * jenv, jclass, jlong thiz, jlong imageGray, jlong faces)
+  (JNIEnv * jenv, jclass, jlong thiz, jlong imageRgba, jlong faces)
 {
 	LOGD("dlibDetect_faceDetect Start");
 	try{
-			//vector<Rect> RectFaces;
-			cv::Mat* rgba = (cv::Mat*) imageGray;
-			cv::Mat rgb;
-			cv::cvtColor(*rgba,rgb,CV_RGBA2RGB);
-			if(rgba == 0) {
-			  LOGD("Null matrix");
-			}
-			else {
-			  LOGD("The matrix is not null. It has %i rows and %i columns", (*rgba).rows, (*rgba).cols);
-			  LOGD("depth:",(*rgba).depth());
-			}
-			imageProcess(rgb);
+		cv::Mat* rgba = (cv::Mat*) imageRgba;
+		cv::Mat rgb;
+		cv::cvtColor(*rgba,rgb,CV_RGBA2RGB);
+		if(rgba == 0) {
+		  LOGD("Null matrix");
+		}
+		else {
+		  LOGD("The matrix is not null. It has %i rows and %i columns", (*rgba).rows, (*rgba).cols);
+		  LOGD("depth:",(*rgba).depth());
+		}
+		imageProcess(rgb,*rgba);
 	}
 	catch(...)
 	{
@@ -236,5 +233,5 @@ JNIEXPORT void JNICALL Java_com_example_dlib4android_dlibDetect_handleImage
 JNIEXPORT void JNICALL Java_com_example_dlib4android_dlibDetect_helloWorld
   (JNIEnv *, jclass)
 {
-	LOGD("hello=====================================");
+	LOGD("hello");
 }

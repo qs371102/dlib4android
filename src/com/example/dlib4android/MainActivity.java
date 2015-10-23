@@ -31,7 +31,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 	private Mat                   mRgba;
     private Mat                   mGray;
     private dlibDetect            mDlibDetect;
-    private boolean 			  mHandleVideo=false;
+    private boolean 			  mHandleVideo=true;
     private boolean 			  mHandleOnce=true;	
     
    // private GestureDetector detector = new GestureDetector((android.view.GestureDetector.OnGestureListener) this);
